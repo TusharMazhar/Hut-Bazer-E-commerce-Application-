@@ -1,6 +1,6 @@
 const express = require('express')
 const router=express.Router()
-const verfiedUser=require('../Token/verifiedUser')
+const verfiedUser=require('../middlewareToken/verifiedUser')
 
 const {userSign,userLogin,allProduct}=require('../controllers/user')
 

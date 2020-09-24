@@ -54,7 +54,9 @@ const userLogin=async(req,res)=>{
     //res.status(201).send(" Logged in!,welcome to this portal")
 
     const token=jwt.sign({ _id: User._id},process.env.SECRET_KEY)
+
     res.header('auth-token',token).send(token);
+    
 
 }
 
