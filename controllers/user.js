@@ -57,4 +57,10 @@ const userLogin=async(req,res)=>{
     res.header('auth-token',token).send(token);
 
 }
-module.exports={userSign,userLogin}
+
+const allProduct=(req,res)=>{
+    res.send("hello from all products")
+}
+
+
+module.exports={userSign,userLogin,allProduct}
