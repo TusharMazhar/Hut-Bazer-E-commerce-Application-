@@ -2,7 +2,8 @@ const express=require('express')
 const User=require('../models/user')
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken');
-const {registerValidation,loginValidation}=require('../userValidation/validation')
+const {registerValidation,loginValidation}=require('../userValidation/validation');
+const { findById } = require('../models/user');
 
 const userSign=async(req,res)=>{
 
@@ -22,20 +23,23 @@ const userSign=async(req,res)=>{
         email:req.body.email,
         phone:req.body.phone,
         address:req.body.address,
-        password:hashPassword
+        password:hashPassword,
+        role:req.body.role,
+        history:req.body.history
 
 
 
     });
     try{
-
+       
         const userData=await user.save()
-        //res.status(201).send({user:user._id})
-        res.send("New User Created Successfully!")
+        user.password=undefined // passowrd will not show
+        res.json({user:userData,msg:"New User Created Successfully!"})
+        
 
     }catch(err){
 
-        res.status(400).send('User Registration failed')
+        res.status(400).json({msg:"User Registration failed"})
 
     }
 
@@ -45,24 +49,31 @@ const userLogin=async(req,res)=>{
     const{error}=loginValidation(req.body);
     if(error) return res.status(400).send(error.details[0].message)
     const phoneExists= await User.findOne({phone:req.body.phone})
+   
     if(!phoneExists) return res.status(400).send('Phone Number  not Found')
     
     const validPass=await bcrypt.compare(req.body.password,phoneExists.password)
     if(!validPass) return res.status(400).send('Password  is wrong')
 
 
-    //res.status(201).send(" Logged in!,welcome to this portal")
+    
 
-    const token=jwt.sign({ _id: User._id},process.env.SECRET_KEY)
-
-    res.header('auth-token',token).send(token);
+    const token=jwt.sign({ _id: User._id},process.env.SECRET_KEY,{expiresIn: '1d'})
+    await User.findOne({phone:req.body.phone},(err,user)=>{
+        res.header('auth-token',token).json({_id:user._id,Token:token});
+    })
+   
+    
     
 
 }
 
-const allProduct=(req,res)=>{
-    res.send("hello from all products")
+const userSignOut=(req,res)=>{
+    res.send(" Logged Out Succesfully")
+    
+
+
 }
 
 
-module.exports={userSign,userLogin,allProduct}
+module.exports={userSign,userLogin,userSignOut}

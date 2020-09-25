@@ -4,42 +4,47 @@ const userSchema=new mongoose.Schema({
     name:{
         type:String,
         required:true,
-        min:6,
-        max:255
+       
       
     },
     email:{
 
         type:String,
         required:true,
-        min:6,
-        max:255,
+        unique:true
+       
         
 
     },
     phone:{
         type:Number,
         required:true,
-        min:11
+        min:11,
+        unique:true
     },
     address:{
         type:String,
         required:true,
-        max:255,
+       
         
     },
     password:{
         type:String,
         required:true,
-        min:6,
-        max:255
+        min:12,
+      
     },
-   
-    Date:{
-        type:Date,
-        default:Date.now
+    role:{
+        type:Number,
+        default:0
+    },
+    history:{
+        type:Array,
+        default:[]
     }
+   
+   
 
-});
+},{timestamps:true});
 
 module.exports=mongoose.model('users',userSchema)
